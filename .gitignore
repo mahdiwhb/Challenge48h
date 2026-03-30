@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Database
+*.db
+*.db-journal
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Generated data
+data/processed/*.csv
+data/processed/*.json
+
+# Data (keep structure, ignore large files)
+data/raw/*.csv
+data/raw/*.json
+!data/raw/seed_*.csv
+!data/raw/seed_*.json
+!data/raw/arrondissements.geojson

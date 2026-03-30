@@ -1,0 +1,18 @@
+{
+  "scoring_version": "1.0.0",
+  "description": "Configuration du scoring Parkshare par arrondissement",
+  "weights": {
+    "densite_population": 0.25,
+    "part_logements_collectifs": 0.25,
+    "pression_stationnement": 0.30,
+    "taux_motorisation": 0.20
+  },
+  "normalization": "min-max",
+  "score_range": [0, 100],
+  "notes": {
+    "densite_population": "Plus la densité est élevée, plus le potentiel est fort (plus de résidents partageant des espaces)",
+    "part_logements_collectifs": "Les copropriétés sont la cible principale de Parkshare",
+    "pression_stationnement": "Plus la pression est forte, plus les résidents chercheront des solutions alternatives",
+    "taux_motorisation": "Un taux élevé indique plus de véhicules à garer dans la copropriété"
+  }
+}

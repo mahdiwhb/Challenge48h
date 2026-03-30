@@ -1,0 +1,12 @@
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY app/frontend/package.json app/frontend/package-lock.json* ./
+RUN npm install
+COPY app/frontend/ .
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+# Will be overridden by docker-compose nginx config
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
