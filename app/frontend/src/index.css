@@ -221,7 +221,8 @@ tr:hover td { background: var(--bg-hover); }
 
 .detail-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; font-size: 13px; }
 .detail-row:last-child { border-bottom: none; }
-.detail-label { color: var(--text-muted); font-size: 12px; font-weight: 500; }
+.detail-label { color: var(--text-muted); font-size: 12px; font-weight: 500; display: flex; flex-direction: column; gap: 2px; }
+.detail-hint { display: block; font-size: 10px; font-weight: 400; color: var(--text-muted); opacity: 0.7; }
 .detail-value { font-family: 'JetBrains Mono', monospace; font-weight: 500; color: var(--text-heading); font-size: 13px; }
 
 .map-legend {

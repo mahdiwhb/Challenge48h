@@ -159,39 +159,39 @@ export default function MapPage() {
                 <div className="detail-body">
                   <div className="detail-section-title">Demographie</div>
                   <div className="detail-row">
-                    <span className="detail-label">Population</span>
-                    <span className="detail-value">{selected.population?.toLocaleString('fr-FR')}</span>
+                    <span className="detail-label">Population<span className="detail-hint">Nombre d'habitants (INSEE)</span></span>
+                    <span className="detail-value">{selected.population?.toLocaleString('fr-FR')} hab.</span>
                   </div>
                   <div className="detail-row">
-                    <span className="detail-label">Densite</span>
+                    <span className="detail-label">Densite<span className="detail-hint">Habitants par km2 de superficie</span></span>
                     <span className="detail-value">{selected.densite_population?.toLocaleString('fr-FR')} hab/km2</span>
                   </div>
                   <div className="detail-row">
-                    <span className="detail-label">Logements collectifs</span>
+                    <span className="detail-label">Logements collectifs<span className="detail-hint">Part des logements en immeuble collectif</span></span>
                     <span className="detail-value">{selected.part_logements_collectifs}%</span>
                   </div>
                   <div className="detail-row">
-                    <span className="detail-label">Nb logements</span>
+                    <span className="detail-label">Nb logements<span className="detail-hint">Total de logements dans l'arrondissement</span></span>
                     <span className="detail-value">{selected.nb_logements?.toLocaleString('fr-FR')}</span>
                   </div>
 
                   <div className="detail-section-title">Stationnement</div>
                   <div className="detail-row">
-                    <span className="detail-label">Nb voitures</span>
+                    <span className="detail-label">Nb voitures<span className="detail-hint">Vehicules immatricules dans l'arrondissement</span></span>
                     <span className="detail-value">{selected.nb_voitures?.toLocaleString('fr-FR')}</span>
                   </div>
                   <div className="detail-row">
-                    <span className="detail-label">Taux motorisation</span>
-                    <span className="detail-value">{selected.taux_motorisation}</span>
+                    <span className="detail-label">Taux motorisation<span className="detail-hint">Vehicules pour 1 000 habitants</span></span>
+                    <span className="detail-value">{selected.taux_motorisation} ‰</span>
                   </div>
 
-                  <div className="detail-section-title">Indicateurs</div>
+                  <div className="detail-section-title">Indicateurs Parkshare</div>
                   <div className="detail-row">
-                    <span className="detail-label">Pression stationnement</span>
+                    <span className="detail-label">Pression stationnement<span className="detail-hint">Indice normalise, 100 = pression maximale</span></span>
                     <span className="detail-value">{selected.kpi_pression_stationnement}/100</span>
                   </div>
                   <div className="detail-row">
-                    <span className="detail-label">Densite residentielle</span>
+                    <span className="detail-label">Densite residentielle<span className="detail-hint">Logements collectifs par km2, normalise sur 100</span></span>
                     <span className="detail-value">{selected.kpi_densite_residentielle}/100</span>
                   </div>
                 </div>
