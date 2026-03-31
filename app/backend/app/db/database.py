@@ -1,7 +1,3 @@
-"""
-SQLite database connection via SQLAlchemy.
-"""
-
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, Session
 from app.backend.app.core.config import settings
@@ -16,13 +12,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def init_db():
-    """Verify database connectivity."""
     with engine.connect() as conn:
         conn.execute(text("SELECT 1"))
 
 
 def get_db():
-    """Dependency injection for database sessions."""
     db = SessionLocal()
     try:
         yield db

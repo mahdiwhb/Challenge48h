@@ -4,6 +4,7 @@ import { api } from '../api';
 interface Message {
   role: 'user' | 'bot';
   text: string;
+  source?: string;
 }
 
 const SUGGESTIONS = [
@@ -20,6 +21,7 @@ export default function Chatbot() {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [aiMode, setAiMode] = useState<string | null>(null);
   const messagesEnd = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -36,7 +38,8 @@ export default function Chatbot() {
     
     try {
       const res = await api.chatbot(query);
-      setMessages(prev => [...prev, { role: 'bot', text: res.response }]);
+      setAiMode(res.source);
+      setMessages(prev => [...prev, { role: 'bot', text: res.response, source: res.source }]);
     } catch {
       setMessages(prev => [...prev, { role: 'bot', text: 'Erreur de communication avec le serveur.' }]);
     } finally {
@@ -53,7 +56,7 @@ export default function Chatbot() {
 
       <div className="chatbot-panel">
         <div className="chatbot-header">
-          Assistant Parkshare <span style={{ fontSize: 10, color: 'var(--text-disabled)', marginLeft: 8, fontFamily: "'JetBrains Mono', monospace", letterSpacing: '0.04em' }}>rule-based</span>
+          Assistant Parkshare <span style={{ fontSize: 10, color: aiMode === 'llm' ? 'var(--primary)' : 'var(--text-disabled)', marginLeft: 8, fontFamily: "'JetBrains Mono', monospace", letterSpacing: '0.04em' }}>{aiMode === 'llm' ? 'IA' : 'rule-based'}</span>
         </div>
 
         <div className="chatbot-messages">
@@ -70,7 +73,6 @@ export default function Chatbot() {
           <div ref={messagesEnd} />
         </div>
 
-        {/* Suggestion chips */}
         <div style={{ padding: '8px 16px', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {SUGGESTIONS.map((s) => (
             <button

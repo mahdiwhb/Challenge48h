@@ -1,5 +1,3 @@
-"""Health check endpoint."""
-
 from fastapi import APIRouter
 from app.backend.app.core.config import settings
 

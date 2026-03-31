@@ -34,7 +34,6 @@ export default function PipelineAdmin() {
       </div>
 
       <div className="grid-2">
-        {/* Pipeline status */}
         <div className="card">
           <div className="card-title">Etat du pipeline</div>
           {status?.latest ? (
@@ -73,7 +72,6 @@ export default function PipelineAdmin() {
           </button>
         </div>
 
-        {/* Scoring config */}
         <div className="card">
           <div className="card-title">Pondérations du scoring</div>
           {config && (
@@ -99,7 +97,6 @@ export default function PipelineAdmin() {
         </div>
       </div>
 
-      {/* Run history */}
       {status?.runs && status.runs.length > 0 && (
         <div className="card" style={{ marginTop: 24 }}>
           <div className="card-title">Historique des runs</div>
@@ -124,7 +121,6 @@ export default function PipelineAdmin() {
         </div>
       )}
 
-      {/* Documentation */}
       <div className="card" style={{ marginTop: 24 }}>
         <div className="card-title">Documentation pipeline</div>
         <div className="doc-block">

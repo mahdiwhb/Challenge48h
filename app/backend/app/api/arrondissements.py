@@ -1,5 +1,3 @@
-"""Arrondissements endpoints."""
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import text
@@ -10,7 +8,6 @@ router = APIRouter()
 
 @router.get("/arrondissements")
 def list_arrondissements(db: Session = Depends(get_db)):
-    """List all arrondissements with their scores."""
     rows = db.execute(text("""
         SELECT p.code_arrondissement, p.nom, p.superficie_km2, p.population,
                p.densite_population, p.nb_logements, p.part_logements_collectifs,
@@ -27,7 +24,6 @@ def list_arrondissements(db: Session = Depends(get_db)):
 
 @router.get("/arrondissements/{code}")
 def get_arrondissement(code: str, db: Session = Depends(get_db)):
-    """Get detailed data for a single arrondissement."""
     row = db.execute(text("""
         SELECT p.*, k.score_parkshare, k.rang,
                k.kpi_pression_stationnement, k.kpi_densite_residentielle

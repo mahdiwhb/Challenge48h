@@ -1,5 +1,3 @@
-"""Correlation endpoints."""
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
@@ -20,12 +18,10 @@ VARIABLE_LABELS = {
 
 @router.get("/correlations")
 def get_correlations(db: Session = Depends(get_db)):
-    """Get correlation matrix and metadata."""
     rows = db.execute(text(
         "SELECT var1, var2, correlation FROM correlation_matrix"
     )).fetchall()
     
-    # Build matrix dict
     matrix = {}
     variables = set()
     for r in rows:
@@ -51,13 +47,11 @@ def get_scatter_data(
     var_y: str = "score_parkshare",
     db: Session = Depends(get_db),
 ):
-    """Get scatter plot data for two variables."""
     allowed = {
         "densite_population", "part_logements_collectifs", "pression_stationnement",
         "taux_motorisation", "densite_logements_collectifs", "ratio_vehicules_places",
     }
     
-    # Validate variable names against whitelist
     if var_x not in allowed and var_x != "score_parkshare":
         var_x = "densite_population"
     if var_y not in allowed and var_y != "score_parkshare":

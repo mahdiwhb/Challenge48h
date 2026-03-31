@@ -1,5 +1,3 @@
-"""Map GeoJSON endpoint with KPI data injected into properties."""
-
 import json
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -11,20 +9,12 @@ router = APIRouter()
 
 @router.get("/map/geojson")
 def get_map_geojson(kpi: str = "score_parkshare", db: Session = Depends(get_db)):
-    """
-    Get GeoJSON with KPI data in feature properties.
-    
-    Args:
-        kpi: Which KPI to highlight (score_parkshare, kpi_pression_stationnement, kpi_densite_residentielle)
-    """
-    # Get GeoJSON
     geojson_row = db.execute(text("SELECT geojson_data FROM geojson_cache WHERE id = 1")).fetchone()
     if not geojson_row:
         return {"type": "FeatureCollection", "features": []}
     
     geojson = json.loads(geojson_row[0])
     
-    # Get KPI data
     rows = db.execute(text("""
         SELECT k.code_arrondissement, k.score_parkshare, k.rang,
                k.kpi_pression_stationnement, k.kpi_densite_residentielle,
@@ -40,7 +30,6 @@ def get_map_geojson(kpi: str = "score_parkshare", db: Session = Depends(get_db))
         d = dict(r._mapping)
         kpi_map[d["code_arrondissement"]] = d
     
-    # Inject KPI data into GeoJSON properties
     for feature in geojson["features"]:
         code = feature["properties"]["code"]
         if code in kpi_map:
