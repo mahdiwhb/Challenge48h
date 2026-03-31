@@ -53,7 +53,7 @@ export default function Chatbot() {
 
       <div className="chatbot-panel">
         <div className="chatbot-header">
-          Assistant Parkshare <span style={{ fontSize: 10, color: 'var(--text-disabled)', marginLeft: 8, fontFamily: "'DM Mono', monospace", letterSpacing: '0.04em' }}>rule-based</span>
+          Assistant Parkshare <span style={{ fontSize: 10, color: 'var(--text-disabled)', marginLeft: 8, fontFamily: "'JetBrains Mono', monospace", letterSpacing: '0.04em' }}>rule-based</span>
         </div>
 
         <div className="chatbot-messages">

@@ -26,6 +26,24 @@ docker compose run --rm backend python -m data.scripts.seed_database
 docker compose up -d
 ```
 
+---
+
+## Commandes utiles : 
+
+```bash
+# Seed bdd
+python -m data.scripts.seed_database
+
+# launch backend
+python -m uvicorn app.backend.app.main:app --host 0.0.0.0 --port 8000
+
+# laucnch fronted
+cd app\frontend
+npm run dev
+```
+
+---
+
 **Accès :**
 - 🖥️ Dashboard : [http://localhost](http://localhost)
 - 📡 API : [http://localhost/api/docs](http://localhost/api/docs)

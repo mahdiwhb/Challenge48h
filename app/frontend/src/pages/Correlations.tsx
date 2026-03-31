@@ -36,9 +36,9 @@ export default function Correlations() {
       marker: {
         size: scatterData.data.map((d: any) => Math.max(8, d.score_parkshare / 5)),
         color: scatterData.data.map((d: any) => d.score_parkshare),
-        colorscale: [[0, '#E85050'], [0.5, '#F2A93B'], [1, '#3EE8A0']],
+        colorscale: [[0, '#DC2626'], [0.5, '#D97706'], [1, '#16A34A']],
         showscale: true,
-        colorbar: { title: 'Score', tickfont: { color: '#9BAFC8' }, titlefont: { color: '#9BAFC8' } },
+        colorbar: { title: 'Score', tickfont: { color: '#64748B' }, titlefont: { color: '#334155' } },
       },
     };
   }, [scatterData]);
@@ -65,9 +65,9 @@ export default function Correlations() {
               x: heatmapData.x,
               y: heatmapData.y,
               colorscale: [
-                [0, '#E85050'],
-                [0.5, '#F2A93B'],
-                [1, '#3EE8A0'],
+                [0, '#DC2626'],
+                [0.5, '#D97706'],
+                [1, '#16A34A'],
               ],
               zmin: -1,
               zmax: 1,
@@ -78,9 +78,9 @@ export default function Correlations() {
             layout={{
               margin: { l: 160, r: 40, t: 20, b: 160 },
               height: 450,
-              font: { size: 11, color: '#9BAFC8', family: "'DM Mono', monospace" },
-              paper_bgcolor: '#0E1520',
-              plot_bgcolor: '#0E1520',
+              font: { size: 11, color: '#334155', family: "'Inter', sans-serif" },
+              paper_bgcolor: '#FFFFFF',
+              plot_bgcolor: '#FFFFFF',
             }}
             config={{ responsive: true, displayModeBar: false }}
             style={{ width: '100%' }}
@@ -115,18 +115,18 @@ export default function Correlations() {
               y: scatterPlotData.y,
               text: scatterPlotData.text,
               textposition: 'top center',
-              textfont: { size: 9, color: '#5C7294' },
+              textfont: { size: 9, color: '#64748B' },
               marker: scatterPlotData.marker,
               hovertemplate: '%{text}<br>X: %{x:.1f}<br>Y: %{y:.1f}<extra></extra>',
             }]}
             layout={{
               margin: { l: 60, r: 40, t: 20, b: 60 },
               height: 450,
-              xaxis: { title: scatterData?.x_label || varX, gridcolor: '#1E2D42', zerolinecolor: '#1E2D42', tickfont: { color: '#9BAFC8' }, titlefont: { color: '#C8DCF0' } },
-              yaxis: { title: scatterData?.y_label || varY, gridcolor: '#1E2D42', zerolinecolor: '#1E2D42', tickfont: { color: '#9BAFC8' }, titlefont: { color: '#C8DCF0' } },
-              font: { size: 12, color: '#9BAFC8', family: "'DM Mono', monospace" },
-              paper_bgcolor: '#0E1520',
-              plot_bgcolor: '#0E1520',
+              xaxis: { title: scatterData?.x_label || varX, gridcolor: '#E2E5EA', zerolinecolor: '#CBD5E1', tickfont: { color: '#64748B' }, titlefont: { color: '#334155' } },
+              yaxis: { title: scatterData?.y_label || varY, gridcolor: '#E2E5EA', zerolinecolor: '#CBD5E1', tickfont: { color: '#64748B' }, titlefont: { color: '#334155' } },
+              font: { size: 12, color: '#334155', family: "'Inter', sans-serif" },
+              paper_bgcolor: '#FFFFFF',
+              plot_bgcolor: '#FFFFFF',
             }}
             config={{ responsive: true, displayModeBar: true }}
             style={{ width: '100%' }}

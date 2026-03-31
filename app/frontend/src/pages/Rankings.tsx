@@ -7,6 +7,12 @@ function getScoreClass(score: number) {
   return 'score-low';
 }
 
+function getBarColor(score: number) {
+  if (score >= 60) return '#16A34A';
+  if (score >= 35) return '#D97706';
+  return '#DC2626';
+}
+
 export default function Rankings() {
   const [data, setData] = useState<any[]>([]);
   const [sortBy, setSortBy] = useState('score_parkshare');
@@ -30,12 +36,12 @@ export default function Rankings() {
   };
 
   const sortIcon = (col: string) => {
-    if (sortBy !== col) return ' ↕';
-    return order === 'desc' ? ' ↓' : ' ↑';
+    if (sortBy !== col) return ' \u2195';
+    return order === 'desc' ? ' \u2193' : ' \u2191';
   };
 
   const downloadCSV = () => {
-    const headers = ['Rang', 'Code', 'Arrondissement', 'Score Parkshare', 'Pression Stationnement', 'Densité Résidentielle'];
+    const headers = ['Rang', 'Code', 'Arrondissement', 'Score Parkshare', 'Pression Stationnement', 'Densite Residentielle'];
     const rows = data.map(d =>
       [d.rang, d.code_arrondissement, d.nom, d.score_parkshare, d.kpi_pression_stationnement, d.kpi_densite_residentielle].join(',')
     );
@@ -92,7 +98,7 @@ export default function Rankings() {
                     Pression stationnement{sortIcon('kpi_pression_stationnement')}
                   </th>
                   <th style={{ cursor: 'pointer' }} onClick={() => handleSort('kpi_densite_residentielle')}>
-                    Densité résidentielle{sortIcon('kpi_densite_residentielle')}
+                    Densite residentielle{sortIcon('kpi_densite_residentielle')}
                   </th>
                   <th>Barre</th>
                 </tr>
@@ -115,14 +121,16 @@ export default function Rankings() {
                     <td>{d.kpi_densite_residentielle}</td>
                     <td style={{ width: 200 }}>
                       <div style={{
-                        height: 4,
-                        background: 'var(--border)',
+                        height: 6,
+                        background: 'var(--bg-hover)',
+                        borderRadius: 3,
                         position: 'relative',
                       }}>
                         <div style={{
                           height: '100%',
                           width: `${d.score_parkshare}%`,
-                          background: d.score_parkshare >= 60 ? 'var(--status-available)' : d.score_parkshare >= 35 ? 'var(--accent)' : 'var(--status-full)',
+                          background: getBarColor(d.score_parkshare),
+                          borderRadius: 3,
                         }} />
                       </div>
                     </td>

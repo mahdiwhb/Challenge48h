@@ -1,14 +1,33 @@
-import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-import type { Layer, LeafletMouseEvent } from 'leaflet';
+import { useState, useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
+import type { Layer, LeafletMouseEvent, Map as LMap } from 'leaflet';
+import L from 'leaflet';
 import { api } from '../api';
 
 function getColor(value: number): string {
-  if (value >= 80) return '#3EE8A0';
-  if (value >= 60) return '#59C890';
-  if (value >= 40) return '#F2A93B';
-  if (value >= 20) return '#E87850';
-  return '#E85050';
+  if (value >= 80) return '#16A34A';
+  if (value >= 60) return '#65A30D';
+  if (value >= 40) return '#D97706';
+  if (value >= 20) return '#EA580C';
+  return '#DC2626';
+}
+
+const PARIS_BOUNDS: L.LatLngBoundsExpression = [
+  [48.815, 2.224],
+  [48.903, 2.470],
+];
+
+function FitParis() {
+  const map = useMap();
+  useEffect(() => {
+    map.fitBounds(PARIS_BOUNDS, { padding: [10, 10] });
+    map.setMaxBounds([
+      [48.78, 2.18],
+      [48.93, 2.52],
+    ]);
+    map.setMinZoom(11);
+  }, [map]);
+  return null;
 }
 
 export default function MapPage() {
@@ -16,6 +35,7 @@ export default function MapPage() {
   const [activeKpi, setActiveKpi] = useState('score_parkshare');
   const [selected, setSelected] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const geoJsonRef = useRef<any>(null);
 
   const loadMap = (kpi: string) => {
     setLoading(true);
@@ -31,26 +51,49 @@ export default function MapPage() {
     const val = feature.properties[activeKpi] || 0;
     return {
       fillColor: getColor(val),
-      weight: 1.5,
-      opacity: 1,
-      color: '#1E2D42',
-      fillOpacity: 0.75,
+      weight: 1,
+      opacity: 0.8,
+      color: '#94A3B8',
+      fillOpacity: 0.6,
     };
+  };
+
+  const selectedRef = useRef<any>(null);
+
+  const resetSelected = () => {
+    if (selectedRef.current) {
+      const val = selectedRef.current.feature?.properties?.[activeKpi] || 0;
+      selectedRef.current.setStyle({ weight: 1, fillOpacity: 0.6, color: '#94A3B8', fillColor: getColor(val) });
+      selectedRef.current = null;
+    }
   };
 
   const onEachFeature = (feature: any, layer: Layer) => {
     const p = feature.properties;
     layer.bindTooltip(
-      `<strong>${p.nom}</strong><br/>Score: ${p.score_parkshare ?? 'N/A'}/100<br/>Rang: ${p.rang ?? 'N/A'}`,
+      `<strong>${p.nom}</strong><br/>Score: ${p.score_parkshare ?? 'N/A'}/100<br/>Rang: ${p.rang ?? 'N/A'}/20`,
       { sticky: true }
     );
     layer.on({
-      click: () => setSelected(p),
+      click: (e: LeafletMouseEvent) => {
+        resetSelected();
+        setSelected(p);
+        selectedRef.current = e.target;
+        e.target.setStyle({ weight: 3, fillOpacity: 0.85, color: '#2563EB', dashArray: '' });
+        e.target.bringToFront();
+      },
       mouseover: (e: LeafletMouseEvent) => {
-        e.target.setStyle({ weight: 2.5, fillOpacity: 0.95 });
+        if (selectedRef.current !== e.target) {
+          e.target.setStyle({ weight: 2, fillOpacity: 0.8, color: '#60A5FA' });
+          e.target.bringToFront();
+          if (selectedRef.current) selectedRef.current.bringToFront();
+        }
       },
       mouseout: (e: LeafletMouseEvent) => {
-        e.target.setStyle({ weight: 1.5, fillOpacity: 0.75 });
+        if (selectedRef.current !== e.target) {
+          const val = feature.properties[activeKpi] || 0;
+          e.target.setStyle({ weight: 1, fillOpacity: 0.6, color: '#94A3B8', fillColor: getColor(val) });
+        }
       },
     });
   };
@@ -59,17 +102,17 @@ export default function MapPage() {
     <div>
       <div className="page-header">
         <h2>Carte interactive</h2>
-        <p>Visualisation du potentiel Parkshare par arrondissement</p>
+        <p>Potentiel Parkshare par arrondissement de Paris</p>
       </div>
 
       <div className="filters-bar">
-        <label style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: '0.05em', color: 'var(--text-muted)' }}>Indicateur :</label>
+        <label>Indicateur :</label>
         {mapData?.kpi_options?.map((opt: any) => (
           <button
             key={opt.value}
             className={`btn ${activeKpi === opt.value ? 'btn-primary' : 'btn-outline'}`}
             onClick={() => loadMap(opt.value)}
-            style={{ fontSize: 13, padding: '6px 14px' }}
+            style={{ fontSize: 12, padding: '6px 14px' }}
           >
             {opt.label}
           </button>
@@ -86,14 +129,19 @@ export default function MapPage() {
                 center={[48.8566, 2.3522]}
                 zoom={12}
                 scrollWheelZoom={true}
-                style={{ height: 500, width: '100%' }}
+                style={{ height: 540, width: '100%' }}
+                maxBounds={[[48.78, 2.18], [48.93, 2.52]]}
+                minZoom={11}
+                maxZoom={16}
               >
+                <FitParis />
                 <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
-                  url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
+                  url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
                 />
                 {mapData?.geojson && (
                   <GeoJSON
+                    ref={geoJsonRef}
                     key={activeKpi + JSON.stringify(mapData.geojson).slice(0, 50)}
                     data={mapData.geojson}
                     style={style}
@@ -105,7 +153,7 @@ export default function MapPage() {
                 <span>Faible</span>
                 <div className="legend-gradient" />
                 <span>Fort</span>
-                <span style={{ marginLeft: 8, color: 'var(--text-muted)', fontSize: 11, fontFamily: "'DM Mono', monospace" }}>
+                <span style={{ marginLeft: 8, color: 'var(--text-muted)', fontSize: 11 }}>
                   {mapData?.kpi_options?.find((o: any) => o.value === activeKpi)?.label}
                 </span>
               </div>
@@ -113,56 +161,77 @@ export default function MapPage() {
           )}
         </div>
 
-        {/* Detail panel */}
         <div className="detail-panel">
-          {selected ? (
-            <>
-              <h3>{selected.nom}</h3>
-              <div className="detail-row">
-                <span className="detail-label">Score Parkshare</span>
-                <span className="detail-value">{selected.score_parkshare}/100</span>
+          {selected ? (() => {
+            const score = selected.score_parkshare ?? 0;
+            const tier = score >= 70 ? 'high' : score >= 40 ? 'medium' : 'low';
+            const barColor = score >= 70 ? '#16A34A' : score >= 40 ? '#D97706' : '#DC2626';
+            return (
+              <>
+                <div className="detail-header">
+                  <h3>{selected.nom}</h3>
+                  <div className="detail-score-hero">
+                    <div className={`detail-score-badge ${tier}`}>{score}</div>
+                    <div className="detail-score-meta">
+                      <span className="score-label">Score Parkshare</span>
+                      <span className="score-rank">Rang {selected.rang}/20</span>
+                      <div className="detail-score-bar-track">
+                        <div className="detail-score-bar-fill" style={{ width: `${score}%`, background: barColor }} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="detail-body">
+                  <div className="detail-section-title">Demographie</div>
+                  <div className="detail-row">
+                    <span className="detail-label">Population</span>
+                    <span className="detail-value">{selected.population?.toLocaleString('fr-FR')}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">Densite</span>
+                    <span className="detail-value">{selected.densite_population?.toLocaleString('fr-FR')} hab/km2</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">Logements collectifs</span>
+                    <span className="detail-value">{selected.part_logements_collectifs}%</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">Nb logements</span>
+                    <span className="detail-value">{selected.nb_logements?.toLocaleString('fr-FR')}</span>
+                  </div>
+
+                  <div className="detail-section-title">Stationnement</div>
+                  <div className="detail-row">
+                    <span className="detail-label">Nb voitures</span>
+                    <span className="detail-value">{selected.nb_voitures?.toLocaleString('fr-FR')}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">Taux motorisation</span>
+                    <span className="detail-value">{selected.taux_motorisation}</span>
+                  </div>
+
+                  <div className="detail-section-title">Indicateurs</div>
+                  <div className="detail-row">
+                    <span className="detail-label">Pression stationnement</span>
+                    <span className="detail-value">{selected.kpi_pression_stationnement}/100</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">Densite residentielle</span>
+                    <span className="detail-value">{selected.kpi_densite_residentielle}/100</span>
+                  </div>
+                </div>
+              </>
+            );
+          })() : (
+            <div className="empty-state">
+              <div className="empty-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                  <path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                </svg>
               </div>
-              <div className="detail-row">
-                <span className="detail-label">Rang</span>
-                <span className="detail-value">{selected.rang}/20</span>
-              </div>
-              <div className="detail-row">
-                <span className="detail-label">Population</span>
-                <span className="detail-value">{selected.population?.toLocaleString('fr-FR')}</span>
-              </div>
-              <div className="detail-row">
-                <span className="detail-label">Densité</span>
-                <span className="detail-value">{selected.densite_population?.toLocaleString('fr-FR')} hab/km²</span>
-              </div>
-              <div className="detail-row">
-                <span className="detail-label">% Logements collectifs</span>
-                <span className="detail-value">{selected.part_logements_collectifs}%</span>
-              </div>
-              <div className="detail-row">
-                <span className="detail-label">Taux motorisation</span>
-                <span className="detail-value">{selected.taux_motorisation}</span>
-              </div>
-              <div className="detail-row">
-                <span className="detail-label">Pression stationnement</span>
-                <span className="detail-value">{selected.kpi_pression_stationnement}/100</span>
-              </div>
-              <div className="detail-row">
-                <span className="detail-label">Densité résidentielle</span>
-                <span className="detail-value">{selected.kpi_densite_residentielle}/100</span>
-              </div>
-              <div className="detail-row">
-                <span className="detail-label">Nb voitures</span>
-                <span className="detail-value">{selected.nb_voitures?.toLocaleString('fr-FR')}</span>
-              </div>
-              <div className="detail-row">
-                <span className="detail-label">Nb logements</span>
-                <span className="detail-value">{selected.nb_logements?.toLocaleString('fr-FR')}</span>
-              </div>
-            </>
-          ) : (
-            <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>
-              <p style={{ fontSize: 14, fontFamily: "'DM Mono', monospace", letterSpacing: '0.04em' }}>Cliquez sur un arrondissement</p>
-              <p style={{ fontSize: 12, marginTop: 6, color: 'var(--text-disabled)' }}>pour voir ses détails</p>
+              <p>Selectionnez un arrondissement</p>
+              <p className="hint">Cliquez sur la carte pour voir les details</p>
             </div>
           )}
         </div>
