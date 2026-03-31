@@ -58,42 +58,17 @@ export default function MapPage() {
     };
   };
 
-  const selectedRef = useRef<any>(null);
-
-  const resetSelected = () => {
-    if (selectedRef.current) {
-      const val = selectedRef.current.feature?.properties?.[activeKpi] || 0;
-      selectedRef.current.setStyle({ weight: 1, fillOpacity: 0.6, color: '#94A3B8', fillColor: getColor(val) });
-      selectedRef.current = null;
-    }
-  };
-
   const onEachFeature = (feature: any, layer: Layer) => {
     const p = feature.properties;
-    layer.bindTooltip(
-      `<strong>${p.nom}</strong><br/>Score: ${p.score_parkshare ?? 'N/A'}/100<br/>Rang: ${p.rang ?? 'N/A'}/20`,
-      { sticky: true }
-    );
+    layer.bindTooltip(`<strong>${p.nom}</strong><br/>Score: ${p.score_parkshare ?? 'N/A'}/100<br/>Rang: ${p.rang ?? 'N/A'}/20`);
     layer.on({
-      click: (e: LeafletMouseEvent) => {
-        resetSelected();
-        setSelected(p);
-        selectedRef.current = e.target;
-        e.target.setStyle({ weight: 3, fillOpacity: 0.85, color: '#2563EB', dashArray: '' });
+      click: () => setSelected(p),
+      mouseover: (e: LeafletMouseEvent) => {
+        e.target.setStyle({ weight: 2, fillOpacity: 0.8, color: '#475569' });
         e.target.bringToFront();
       },
-      mouseover: (e: LeafletMouseEvent) => {
-        if (selectedRef.current !== e.target) {
-          e.target.setStyle({ weight: 2, fillOpacity: 0.8, color: '#60A5FA' });
-          e.target.bringToFront();
-          if (selectedRef.current) selectedRef.current.bringToFront();
-        }
-      },
       mouseout: (e: LeafletMouseEvent) => {
-        if (selectedRef.current !== e.target) {
-          const val = feature.properties[activeKpi] || 0;
-          e.target.setStyle({ weight: 1, fillOpacity: 0.6, color: '#94A3B8', fillColor: getColor(val) });
-        }
+        if (geoJsonRef.current) geoJsonRef.current.resetStyle(e.target);
       },
     });
   };
